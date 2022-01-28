@@ -100,15 +100,12 @@ galaxy_config_templates:
     dest: "{{ galaxy_config.galaxy.dependency_resolvers_config_file }}"
   - src: templates/galaxy/config/dependency_resolvers_conf.xml
     dest: "{{ galaxy_config.galaxy.dependency_resolvers_config_file }}"
-
-
-# my own dev tools
-galaxy_tool_config_files:
-  - "{{ galaxy_config.galaxy.local_tools_config_file }}"
-
-group_galaxy_config_files:
   - src: "templates/galaxy/config/local_tool_conf.xml"
     dest: "{{ galaxy_config.galaxy.local_tools_config_file }}"
+
+# my own dev tools
+# galaxy_tool_config_files:
+#   - "{{ galaxy_config.galaxy.local_tools_config_file }}"
 
 # systemd
 galaxy_manage_systemd: yes
