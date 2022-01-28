@@ -104,8 +104,8 @@ galaxy_config_templates:
     dest: "{{ galaxy_config.galaxy.local_tools_config_file }}"
 
 # my own dev tools
-galaxy_tool_config_files:
-  - "{{ galaxy_config.galaxy.local_tools_config_file }}"
+# galaxy_tool_config_files:
+#   - "{{ galaxy_config.galaxy.local_tools_config_file }}"
 
 # systemd
 galaxy_manage_systemd: yes
