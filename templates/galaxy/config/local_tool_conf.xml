@@ -3,6 +3,7 @@
     <section id="local_tools" name="Local Tools">
         <tool file="/home/ubuntu/galaxy-local-tools/tools/links/links.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/cactus/cactus_cactus.xml" />
+        <tool file="/home/ubuntu/galaxy-local-tools/tools/cactus/cactus_export.xml" />
         <tool file="/home/ubuntu/tools-iuc/tools/cutadapt/cutadapt.xml" />
         <tool file="/home/ubuntu/tools-iuc/tools/sra-tools/fasterq_dump.xml" />
     </section>
