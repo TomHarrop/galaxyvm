@@ -5,5 +5,6 @@
         <tool file="/home/ubuntu/galaxy-local-tools/tools/cactus/cactus_export.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/pbmm2/pbmm2.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/pbgcpp/pbgcpp.xml" />
+        <tool file="/home/ubuntu/tools-iuc/tools/links/links.xml" />
     </section>
 </toolbox>
