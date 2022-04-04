@@ -19,7 +19,7 @@ galaxy_create_user: true
 galaxy_separate_privileges: true
 galaxy_manage_paths: true
 galaxy_layout: root-dir
-galaxy_root: /srv/galaxy
+galaxy_root: /mnt/srv/galaxy
 galaxy_user: {name: galaxy, shell: /bin/bash}
 galaxy_commit_id: release_22.01
 galaxy_force_checkout: true
@@ -120,7 +120,7 @@ certbot_install_method: virtualenv
 certbot_auto_renew: yes
 certbot_auto_renew_user: root
 certbot_environment: production
-certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_well_known_root: /mnt/srv/nginx/_well-known_root
 certbot_share_key_users:
   - nginx
 certbot_post_renewal: |
