@@ -11,7 +11,7 @@ postgresql_objects_databases:
   - name: galaxy
     owner: galaxy
 # PostgreSQL Backups
-postgresql_backup_dir: /data/backups
+postgresql_backup_dir: /mnt/data/backups
 postgresql_backup_local_dir: "{{ '~postgres' | expanduser }}/backups"
    
 # Galaxy
@@ -34,7 +34,7 @@ galaxy_config:
     brand: "🐈🐾🐆"
     admin_users: tharrop@unimelb.edu.au
     database_connection: "postgresql:///galaxy?host=/var/run/postgresql"
-    file_path: /data
+    file_path: /mnt/data
     check_migrate_tools: false
     tool_data_table_config_path: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml,/cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
     tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
