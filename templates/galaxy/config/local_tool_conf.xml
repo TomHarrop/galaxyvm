@@ -4,5 +4,6 @@
         <tool file="/home/ubuntu/galaxy-local-tools/tools/pbmm2/pbmm2.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/pbgcpp/pbgcpp.xml" />
         <tool file="/home/ubuntu/tools-iuc/tools/links/links.xml" />
+        <tool file="/home/ubuntu/galaxy-local-tools/tools/protk-proteogenomics/protxml_to_gff.xml" />
     </section>
 </toolbox>
