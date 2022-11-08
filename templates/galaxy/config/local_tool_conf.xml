@@ -6,5 +6,7 @@
         <tool file="/home/ubuntu/tools-iuc/tools/links/links.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/protk-proteogenomics/protxml_to_gff.xml" />
         <tool file="/home/ubuntu/galaxy-local-tools/tools/quickmerge/quickmerge.xml" />
+        <tool file="/home/ubuntu/galaxy-local-tools/tools/cactus/cactus_cactus.xml" />
+        <tool file="/home/ubuntu/galaxy-local-tools/tools/cactus/cactus_export.xml" />
     </section>
 </toolbox>
