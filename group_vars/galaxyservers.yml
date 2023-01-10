@@ -1,8 +1,11 @@
 ---
 # Python 3 support
-pip_virtualenv_command: /usr/bin/python3 -m virtualenv # usegalaxy_eu.certbot, usegalaxy_eu.tiaas2, galaxyproject.galaxy
-certbot_virtualenv_package_name: python3-virtualenv    # usegalaxy_eu.certbot
-pip_package: python3-pip                               # geerlingguy.pip
+# usegalaxy_eu.certbot, usegalaxy_eu.tiaas2, galaxyproject.galaxy
+pip_virtualenv_command: /usr/bin/python3 -m virtualenv
+# usegalaxy_eu.certbot
+certbot_virtualenv_package_name: python3-virtualenv
+# geerlingguy.pip
+pip_package: python3-pip
 
 # PostgreSQL
 postgresql_objects_users:
@@ -13,7 +16,7 @@ postgresql_objects_databases:
 # PostgreSQL Backups
 postgresql_backup_dir: /mnt/data/backups
 postgresql_backup_local_dir: "{{ '~postgres' | expanduser }}/backups"
-   
+
 # Galaxy
 galaxy_create_user: true
 galaxy_separate_privileges: true
@@ -21,7 +24,7 @@ galaxy_manage_paths: true
 galaxy_layout: root-dir
 galaxy_root: /mnt/srv/galaxy
 galaxy_user: {name: galaxy, shell: /bin/bash}
-galaxy_commit_id: release_22.01
+galaxy_commit_id: release_22.05
 galaxy_force_checkout: true
 miniconda_prefix: "{{ galaxy_tool_dependency_dir }}/_conda"
 miniconda_version: 4.7.12
@@ -29,18 +32,15 @@ miniconda_manage_dependencies: false
 
 galaxy_config:
   galaxy:
-    dependency_resolvers_config_file: "{{ galaxy_config_dir }}/dependency_resolvers_conf.xml"
-    containers_resolvers_config_file: "{{ galaxy_config_dir }}/container_resolvers_conf.xml"
     brand: "🐈🐾🐆"
     admin_users: tharrop@unimelb.edu.au
     database_connection: "postgresql:///galaxy?host=/var/run/postgresql"
     file_path: /mnt/data
     check_migrate_tools: false
-    tool_data_table_config_path: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml,/cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
     tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
     object_store_store_by: uuid
     id_secret: "{{ vault_id_secret }}"
-    job_config_file: "{{ galaxy_config_dir }}/job_conf.xml"
+    job_config_file: "{{ galaxy_config_dir }}/job_conf.yml"
     # SQL Performance
     database_engine_option_server_side_cursors: true
     slow_query_log_threshold: 5
@@ -63,61 +63,40 @@ galaxy_config:
     allow_user_impersonation: true
     # Tool security
     outputs_to_working_directory: true
-    # Local tools
-    local_tools_config_file: "{{ galaxy_config_dir }}/local_tool_conf.xml"
-  uwsgi:
-    socket: 127.0.0.1:5000
-    buffer-size: 16384
-    processes: 1
-    threads: 4
-    offload-threads: 2
-    static-map:
-      - /static={{ galaxy_server_dir }}/static
-      - /favicon.ico={{ galaxy_server_dir }}/static/favicon.ico
-    static-safe: client/galaxy/images
-    master: true
-    virtualenv: "{{ galaxy_venv_dir }}"
-    pythonpath: "{{ galaxy_server_dir }}/lib"
-    module: galaxy.webapps.galaxy.buildapp:uwsgi_app()
-    thunder-lock: true
-    die-on-term: true
-    hook-master-start:
-      - unix_signal:2 gracefully_kill_them_all
-      - unix_signal:15 gracefully_kill_them_all
-    py-call-osafterfork: true
-    enable-threads: true
-    mule:
-      - lib/galaxy/main.py
-      - lib/galaxy/main.py
-    farm: job-handlers:1,2
+  gravity:
+    galaxy_root: "{{ galaxy_root }}/server"
+    app_server: gunicorn
+    gunicorn:
+      # listening options
+      bind: "unix:{{ galaxy_mutable_config_dir }}/gunicorn.sock"
+      # performance options
+      workers: 2
+      # Other options that will be passed to gunicorn
+      extra_args: '--forwarded-allow-ips="*"'
+      preload: true
+    celery:
+      concurrency: 2
+      loglevel: DEBUG
+    handlers:
+      handler:
+        processes: 3
+        pools:
+          - job-handler
+          - workflow-scheduler
 
 galaxy_config_templates:
-  - src: templates/galaxy/config/job_conf.xml.j2
+  - src: templates/galaxy/config/job_conf.yml.j2
     dest: "{{ galaxy_config.galaxy.job_config_file }}"
-  - src: templates/galaxy/config/container_resolvers_conf.xml.j2
-    dest: "{{ galaxy_config.galaxy.containers_resolvers_config_file }}"
-  - src: templates/galaxy/config/dependency_resolvers_conf.xml
-    dest: "{{ galaxy_config.galaxy.dependency_resolvers_config_file }}"
-  - src: templates/galaxy/config/dependency_resolvers_conf.xml
-    dest: "{{ galaxy_config.galaxy.dependency_resolvers_config_file }}"
-  - src: "templates/galaxy/config/local_tool_conf.xml"
-    dest: "{{ galaxy_config.galaxy.local_tools_config_file }}"
-
-# my own dev tools
-galaxy_tool_config_files:
-  - "{{ galaxy_server_dir }}/config/tool_conf.xml.sample"
-  - "{{ galaxy_config.galaxy.local_tools_config_file }}"
 
 # systemd
-galaxy_manage_systemd: yes
-galaxy_systemd_env: [DRMAA_LIBRARY_PATH="/usr/lib/slurm-drmaa/lib/libdrmaa.so.1"]
+galaxy_manage_systemd: true
 
 # Certbot
 certbot_auto_renew_hour: "{{ 23 |random(seed=inventory_hostname)  }}"
 certbot_auto_renew_minute: "{{ 59 |random(seed=inventory_hostname)  }}"
 certbot_auth_method: --webroot
 certbot_install_method: virtualenv
-certbot_auto_renew: yes
+certbot_auto_renew: true
 certbot_auto_renew_user: root
 certbot_environment: production
 certbot_well_known_root: /mnt/srv/nginx/_well-known_root
@@ -126,7 +105,7 @@ certbot_share_key_users:
 certbot_post_renewal: |
     systemctl restart nginx || true
 certbot_domains:
- - "{{ inventory_hostname }}"
+  - "{{ inventory_hostname }}"
 certbot_agree_tos: --agree-tos
 
 # NGINX
@@ -138,22 +117,33 @@ nginx_ssl_servers:
 nginx_enable_default_server: false
 nginx_conf_http:
   client_max_body_size: 1g
+  # This is enabled by default in Ubuntu, and the duplicate directive will
+  # cause a crash.
+  # gzip: "on"
+  gzip_proxied: "any"
+  # The ngx_http_gzip_static_module module allows sending precompressed files
+  # with the ".gz" filename extension instead of regular files.
+  gzip_static: "on"
+  gzip_vary: "on"
+  gzip_min_length: 128
+  # Tradeoff of better compression for slightly more CPU time.
+  gzip_comp_level: 6
+  gzip_types: |
+      text/plain
+      text/css
+      text/xml
+      text/javascript
+      application/javascript
+      application/x-javascript
+      application/json
+      application/xml
+      application/xml+rss
+      application/xhtml+xml
+      application/x-font-ttf
+      application/x-font-opentype
+      image/png
+      image/svg+xml
+      image/x-icon
 nginx_ssl_role: usegalaxy_eu.certbot
 nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
 nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-nginx.pem
-
-# Slurm
-slurm_roles: ['controller', 'exec'] # Which roles should the machine play? exec are execution hosts.
-slurm_nodes:
-- name: localhost # Name of our host
-  CPUs: 3         # Here you would need to figure out how many cores your machine has. For this training we will use 2 but in real life, look at `htop` or similar.
-slurm_config:
-  SlurmdParameters: config_overrides   # Ignore errors if the host actually has cores != 2
-  SelectType: select/cons_res
-  SelectTypeParameters: CR_CPU_Memory  # Allocate individual cores/memory instead of entire node
-
-# Golang
-golang_gopath: '/opt/workspace-go'
-# Singularity target version
-singularity_version: "3.7.4"
-singularity_go_path: "{{ golang_install_dir }}"
