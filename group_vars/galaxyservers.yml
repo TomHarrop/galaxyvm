@@ -101,8 +101,8 @@ galaxy_config_templates:
 
 # my own dev tools
 galaxy_tool_config_files:
-  - "{{ galaxy_server_dir }}/config/tool_conf.xml.sample"
   - "{{ galaxy_config.galaxy.local_tools_config_file }}"
+  - "{{ galaxy_server_dir }}/config/tool_conf.xml.sample"
 
 # systemd
 galaxy_manage_systemd: true
