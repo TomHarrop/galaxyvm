@@ -32,16 +32,16 @@ miniconda_manage_dependencies: false
 
 galaxy_config:
   galaxy:
-    dependency_resolvers_config_file: "{{ galaxy_config_dir }}/dependency_resolvers_conf.xml"
-    containers_resolvers_config_file: "{{ galaxy_config_dir }}/container_resolvers_conf.xml"
+    dependency_resolvers_config_file: >
+      "{{ galaxy_config_dir }}/dependency_resolvers_conf.xml"
+    containers_resolvers_config_file: >
+      "{{ galaxy_config_dir }}/container_resolvers_conf.xml"
     brand: "🐈🐾🐆"
     admin_users: tharrop@unimelb.edu.au
     database_connection: "postgresql:///galaxy?host=/var/run/postgresql"
     file_path: /mnt/data
     check_migrate_tools: false
     tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
-    # Local tools
-    local_tools_config_file: "{{ galaxy_config_dir }}/local_tool_conf.xml"
     object_store_store_by: uuid
     id_secret: "{{ vault_id_secret }}"
     job_config_file: "{{ galaxy_config_dir }}/job_conf.yml"
@@ -67,6 +67,8 @@ galaxy_config:
     allow_user_impersonation: true
     # Tool security
     outputs_to_working_directory: true
+    # my own dev tools
+    local_tools_config_file: "{{ galaxy_config_dir }}/local_tool_conf.xml"
   gravity:
     galaxy_root: "{{ galaxy_root }}/server"
     app_server: gunicorn
@@ -99,9 +101,10 @@ galaxy_config_templates:
   - src: "templates/galaxy/config/local_tool_conf.xml"
     dest: "{{ galaxy_config.galaxy.local_tools_config_file }}"
 
-# my own dev tools
 galaxy_tool_config_files:
+  # my own dev tools
   - "{{ galaxy_config.galaxy.local_tools_config_file }}"
+  # don't clobber the built in tools
   - "{{ galaxy_server_dir }}/config/tool_conf.xml.sample"
 
 # systemd
