@@ -1,8 +1,9 @@
 <?xml version="1.0" ?>
+<!-- when i upgraded to 22.05, i could only get these tools to load from /mnt/srv/galaxy/local_tools -->
 <toolbox monitor="true">
     <section id="local_tools" name="Local Tools">
-        <tool file="/home/ubuntu/galaxy-local-tools/tools/pbmm2/pbmm2.xml" />
-        <tool file="/home/ubuntu/galaxy-local-tools/tools/pbgcpp/pbgcpp.xml" />
-        <tool file="/home/ubuntu/galaxy-local-tools/tools/metawrapmg/metawrapmg_binning.xml" />
+        <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/pbmm2/pbmm2.xml" />
+        <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/pbgcpp/pbgcpp.xml" />
+        <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/metawrapmg/metawrapmg_binning.xml" />
     </section>
 </toolbox>
