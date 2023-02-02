@@ -7,16 +7,11 @@
   pre_tasks:
     - name: Install Dependencies
       package:
-        name: ['acl', 'bzip2', 'git', 'make', 'python3-psycopg2', 'tar', 'virtualenv']
-  post_tasks:
-    - name: Install slurm-drmaa
-      package:
-        name: slurm-drmaa1
+        name: ['acl', 'bzip2', 'git',
+               'make', 'python3-psycopg2', 'tar', 'virtualenv']
   roles:
-    - galaxyproject.repos
-    - galaxyproject.slurm
     - galaxyproject.postgresql
-    - role: natefoo.postgresql_objects
+    - role: galaxyproject.postgresql_objects
       become: true
       become_user: postgres
     - geerlingguy.pip
@@ -25,6 +20,23 @@
     - galaxyproject.galaxy
     - role: uchida.miniconda
       become: true
-      become_user: "{{ galaxy_user.name }}"   
+      become_user: "{{ galaxy_user.name }}"
     - galaxyproject.nginx
-    - galaxyproject.cvmfs
+
+
+- name: Configure unattended upgrades
+  hosts: galaxyservers
+  become: true
+  become_user: root
+  vars_files:
+    - group_vars/secret.yml
+  roles:
+    - role: hifis.unattended_upgrades
+      unattended_automatic_reboot: true
+      unattended_automatic_reboot_time: "00:59"
+      unattended_origins_patterns:
+        - 'origin=Ubuntu,archive=${distro_codename}'
+        - 'origin=Ubuntu,archive=${distro_codename}-security'
+        - 'origin=Ubuntu,archive=${distro_codename}-updates'
+      unattended_remove_unused_dependencies: true
+      unattended_remove_unused_kernel_packages: true
