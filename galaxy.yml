@@ -35,7 +35,6 @@
       unattended_automatic_reboot: true
       unattended_automatic_reboot_time: "00:59"
       unattended_origins_patterns:
-        - 'origin=LP-PPA-ansible-ansible,archive=${distro_codename}'
         - 'origin=Ubuntu,archive=${distro_codename}'
         - 'origin=Ubuntu,archive=${distro_codename}-security'
         - 'origin=Ubuntu,archive=${distro_codename}-updates'

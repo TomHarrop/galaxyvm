@@ -4,6 +4,5 @@
     <section id="local_tools" name="Local Tools">
         <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/pbmm2/pbmm2.xml" />
         <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/pbgcpp/pbgcpp.xml" />
-        <tool file="/mnt/srv/galaxy/local_tools/galaxy-local-tools/tools/metawrapmg/metawrapmg_binning.xml" />
     </section>
 </toolbox>
