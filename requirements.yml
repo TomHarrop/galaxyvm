@@ -19,3 +19,7 @@
   version: 2.6.3
 - src: hifis.unattended_upgrades
   version: v2.0.1
+- src: geerlingguy.docker
+  version: 6.1.0
+- src: usegalaxy_eu.gie_proxy
+  version: 0.0.2

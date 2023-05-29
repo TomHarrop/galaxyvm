@@ -26,9 +26,20 @@ execution:
         # filesystem
         - name: SINGULARITY_TMPDIR
           value: /tmp
+    interactive_local:
+      runner: local_runner
+      docker_enabled: true
+      docker_volumes: $defaults
+      docker_sudo: false
+      docker_net: bridge
+      docker_auto_rm: true
+      docker_set_user: "{{ galaxy_user.name }}"
+      require_container: true
 
 tools:
   # these special tools that aren't parameterized for remote execution -
   # expression tools, upload, etc
   - class: local
     environment: local_dest
+  - id: interactive_tool_ethercalc
+    environment: interactive_local

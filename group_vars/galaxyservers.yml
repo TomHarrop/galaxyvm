@@ -67,6 +67,10 @@ galaxy_config:
     outputs_to_working_directory: true
     # my own dev tools
     local_tools_config_file: "{{ galaxy_config_dir }}/local_tool_conf.xml"
+    # interactive tools
+    interactivetools_enable: true
+    interactivetools_map: "{{ gie_proxy_sessions_path }}"
+
   gravity:
     galaxy_root: "{{ galaxy_root }}/server"
     app_server: gunicorn
@@ -98,10 +102,15 @@ galaxy_config_templates:
   # my own dev tools
   - src: "templates/galaxy/config/local_tool_conf.xml"
     dest: "{{ galaxy_config.galaxy.local_tools_config_file }}"
+  # interactive tools
+  - src: templates/galaxy/config/tool_conf_interactive.xml.j2
+    dest: "{{ galaxy_config_dir }}/tool_conf_interactive.xml"
 
 galaxy_tool_config_files:
   # my own dev tools
   - "{{ galaxy_config.galaxy.local_tools_config_file }}"
+  # interactive tools
+  - "{{ galaxy_config_dir }}/tool_conf_interactive.xml"
   # don't clobber the built in tools
   - "{{ galaxy_server_dir }}/config/tool_conf.xml.sample"
 
@@ -131,6 +140,7 @@ nginx_servers:
   - redirect-ssl
 nginx_ssl_servers:
   - galaxy
+  - galaxy-gie-proxy
 nginx_enable_default_server: false
 nginx_conf_http:
   client_max_body_size: 1g
@@ -170,3 +180,16 @@ golang_gopath: '/opt/workspace-go'
 # Singularity target version
 singularity_version: "3.7.4"
 singularity_go_path: "{{ golang_install_dir }}"
+
+# Interactive tools
+docker_install_compose: false
+docker_users:
+  - "{{ galaxy_user.name }}"
+gie_proxy_dir: /srv/galaxy/gie-proxy/proxy
+gie_proxy_git_version: main
+gie_proxy_setup_nodejs: nodeenv
+gie_proxy_virtualenv_command: "{{ pip_virtualenv_command }}"
+gie_proxy_nodejs_version: "10.13.0"
+gie_proxy_virtualenv: /srv/galaxy/gie-proxy/venv
+gie_proxy_setup_service: systemd
+gie_proxy_sessions_path: "{{ galaxy_mutable_data_dir }}/interactivetools_map.sqlite"

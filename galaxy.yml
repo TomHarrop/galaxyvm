@@ -22,7 +22,8 @@
       become: true
       become_user: "{{ galaxy_user.name }}"
     - galaxyproject.nginx
-
+    - geerlingguy.docker
+    - usegalaxy_eu.gie_proxy
 
 - name: Configure unattended upgrades
   hosts: galaxyservers
